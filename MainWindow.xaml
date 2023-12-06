@@ -9,7 +9,7 @@
     <Grid>
         <Canvas x:Name="MyCanvas" Focusable="True">
             <ListView x:Name="MyList" Height="auto" Width="120" Canvas.Left="12" HorizontalAlignment="Left"  Canvas.Top="155" VerticalAlignment="Center"
-                      MouseDoubleClick="Drives_MouseClick">
+                       SelectionChanged="MyList_SelectionChanged">
             </ListView>
             <ListView x:Name="MyDataGrid" Focusable="True" BorderBrush="Black" BorderThickness="1" Canvas.Left="180" Canvas.Top="110" Height="243" Width="545" HorizontalAlignment="Center" VerticalAlignment="Top" MouseDoubleClick="Directories_MouseDoubleClick"/>
             <Button x:Name="Back" Content="Back" Height="33" Width="50" Canvas.Left="40" Canvas.Top="30"/>

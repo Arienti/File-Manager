@@ -1,4 +1,5 @@
-﻿using System;
+﻿using File_Manager.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -24,51 +25,56 @@ namespace File_Manager
     /// </summary>
     public partial class MainWindow : Window
     {
-        string[] drives = Directory.GetLogicalDrives();
-        List<string> directoriesList = new List<string>();
+        string currentSelected = "";
         public MainWindow()
         {
             InitializeComponent();
             ShowDrives();
             MyCanvas.Focus();
+
         }
         private void ShowDrives()
         {
-            foreach (var drive in drives)
+            Drives drives = new Drives();
+            foreach (var drive in drives.drives) //Get local Drives
             {
-                MyList.Items.Add(drive);
+                if (drive.IsReady) // check if drive is in use
+                {
+                    drives.name = drive.Name;
+                    MyList.Items.Add(drive);
+                }
             }
         }
-        private void Drives_MouseClick(object sender, MouseButtonEventArgs e)
-        {
-            MyDataGrid.Items.Clear();
-            string selected = MyList.SelectedItems[0].ToString();
-            string[] directories = Directory.GetDirectories(selected);
-            string[] files = Directory.GetFiles(selected);
-            foreach (string directory in directories)
-            {
-                if (MyDataGrid.SelectedItem == null)
-                {
-                    StringFile.Content = selected;
-                }
-                else
-                {
-                    StringFile.Content = directory;
-                }
-                string name = System.IO.Path.GetFileName(directory);
-                directoriesList.Add(directory);
-                MyDataGrid.Items.Add(name);
-            }
-            foreach (string file in files)
-            {
-                string filename = System.IO.Path.GetFileName(file);
-                MyDataGrid.Items.Add(filename);
-            }
-        }
-        
         private void Directories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             MyDataGrid.Items.Clear();
+        }
+
+        private void MyList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            MyDataGrid.Items.Clear();
+            Directories directories = new Directories();
+            Files file = new Files();
+            currentSelected = e.AddedItems[0].ToString();
+
+            if (currentSelected != null)
+            {
+                StringFile.Content = currentSelected;
+                DirectoryInfo files = new DirectoryInfo(currentSelected.ToString());
+                directories.directories = files.GetDirectories(); //Get All Directories
+                file.files = files.GetFiles(); //Get All files
+            }
+         
+            foreach (var dirs in directories.directories)
+            {
+                directories.name = dirs.Name;
+                MyDataGrid.Items.Add(directories.name);
+            }
+            foreach (var fls in file.files)
+            {
+                file.name = fls.Name;
+                MyDataGrid.Items.Add(file.name);
+            }
         }
     }
 }
