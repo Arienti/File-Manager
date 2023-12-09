@@ -92,7 +92,6 @@ namespace File_Manager
                 if (dirs.Exists)
                 {
                     MyDataGrid.Items.Add(directories.name);
-                    StringFile.Text = StringFile.Text + directories.name;
                 }
             }
             
