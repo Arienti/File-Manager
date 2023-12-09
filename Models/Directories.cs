@@ -9,7 +9,7 @@ namespace File_Manager.Models
 {
     internal class Directories
     {
-        public DirectoryInfo[] directories;
+        public static DirectoryInfo[] directories;
         public string name { get; set; }
     }
 }
