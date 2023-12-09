@@ -78,9 +78,29 @@ namespace File_Manager
                 
             }
         }
+        public void LoadFoldersAndFiles()
+        {
+            MyDataGrid.Items.Clear();
+            Directories directories = new Directories();
+            var items = StringFile.Text.ToString();
+            DirectoryInfo files;
+            files = new DirectoryInfo(items);
+            Directories.directories = files.GetDirectories();
+            foreach (var dirs in Directories.directories)
+            {    
+                directories.name = dirs.Name;
+                if (dirs.Exists)
+                {
+                    MyDataGrid.Items.Add(directories.name);
+                    StringFile.Text = StringFile.Text + directories.name;
+                }
+            }
+            
+        }
         private void Directories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            
+            LoadFoldersAndFiles();
+            Directories directories = new Directories();
         }
 
         private void MyList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -88,7 +108,7 @@ namespace File_Manager
             currentSelected = e.AddedItems[0].ToString();
             if (currentSelected != null) 
             {
-                StringFile.Content = currentSelected.ToString();
+                StringFile.Text = currentSelected.ToString();
             }
             LoadFilesAndDirecories();
         }
@@ -101,7 +121,7 @@ namespace File_Manager
             {
                 if (d != null)
                 {
-                    StringFile.Content = dskselcted + d.ToString();
+                    StringFile.Text = dskselcted + d.ToString();
                 }
             }
         }

@@ -15,7 +15,7 @@
                       VerticalAlignment="Top" SelectionChanged="MyDataGrid_SelectionChanged" MouseDoubleClick="Directories_MouseDoubleClick"/>
             <Button x:Name="Back" Content="Back" Height="33" Width="50" Canvas.Left="40" Canvas.Top="30"/>
             <Button x:Name="Forward" Content="Forward" Height="33" Width="50" Canvas.Left="110" Canvas.Top="30"/>
-            <Label x:Name="StringFile" FontSize="18" Canvas.Left="180" Canvas.Top="30" HorizontalAlignment="Center" VerticalAlignment="Top"
+            <TextBox x:Name="StringFile" FontSize="18" Canvas.Left="180" Canvas.Top="30" HorizontalAlignment="Center" VerticalAlignment="Top"
                    Width="545" Height="33" BorderBrush="Black" BorderThickness="1" RenderTransformOrigin="0.505,0.587" Focusable="True"/>
         </Canvas>
     </Grid>
