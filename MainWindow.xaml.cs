@@ -78,14 +78,9 @@ namespace File_Manager
                 
             }
         }
-        public void LoadFoldersAndFiles()
-        {
-        }
         private void Directories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            LoadFoldersAndFiles();
-
-
+            
         }
 
         private void MyList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -96,6 +91,19 @@ namespace File_Manager
                 StringFile.Content = currentSelected.ToString();
             }
             LoadFilesAndDirecories();
+        }
+
+        private void MyDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selcted = e.AddedItems;
+            var dskselcted = MyList.SelectedItem.ToString();
+            foreach (var d in selcted)
+            {
+                if (d != null)
+                {
+                    StringFile.Content = dskselcted + d.ToString();
+                }
+            }
         }
     }
 }
