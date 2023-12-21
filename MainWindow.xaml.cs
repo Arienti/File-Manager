@@ -101,13 +101,20 @@ namespace File_Manager
             MyDataGrid.Items.Clear();
             string selected = StringFile.Content.ToString();
             Directories directories1 = new Directories();
+            Files filesname = new Files();
             if (selected != null) 
             {
                 var directories = Directory.GetDirectories(selected);
+                var files = Directory.GetFiles(selected);
                 foreach (var dirs in directories)
                 {
                     directories1.name = dirs.ToString();
                     MyDataGrid.Items.Add(directories1.name);   
+                }
+                foreach (var file in files)
+                {
+                    filesname.name = file.ToString();
+                    MyDataGrid.Items.Add(filesname.name);
                 }
             }
         }
