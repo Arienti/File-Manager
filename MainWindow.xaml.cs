@@ -58,12 +58,12 @@ namespace File_Manager
                 if (selected != null)
                 {
                     files = new DirectoryInfo(selected);
-                    Directories.directories = files.GetDirectories(); //Get All Directories
+                    var directory = Directory.GetDirectories(selected); //Get All Directories
                     file.files = files.GetFiles(); //Get All files
 
-                    foreach (var dirs in Directories.directories)
+                    foreach (var dirs in directory)
                     {
-                        directories.name = dirs.Name;
+                        directories.name = dirs.ToString();
                         MyDataGrid.Items.Add(directories.name);
                     }
                     foreach (var fls in file.files)
@@ -98,8 +98,18 @@ namespace File_Manager
         }
         private void Directories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            LoadFoldersAndFiles();
-            Directories directories = new Directories();
+            MyDataGrid.Items.Clear();
+            string selected = StringFile.Content.ToString();
+            Directories directories1 = new Directories();
+            if (selected != null) 
+            {
+                var directories = Directory.GetDirectories(selected);
+                foreach (var dirs in directories)
+                {
+                    directories1.name = dirs.ToString();
+                    MyDataGrid.Items.Add(directories1.name);   
+                }
+            }
         }
 
         private void MyList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -116,11 +126,12 @@ namespace File_Manager
         {
             var selcted = e.AddedItems;
             var dskselcted = MyList.SelectedItem.ToString();
+
             foreach (var d in selcted)
             {
                 if (d != null)
                 {
-                    StringFile.Text = dskselcted + d.ToString();
+                   StringFile.Content = d.ToString();
                 }
             }
         }
