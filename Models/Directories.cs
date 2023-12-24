@@ -10,6 +10,6 @@ namespace File_Manager.Models
     internal class Directories
     {
         public static DirectoryInfo[] directories;
-        public string name { get; set; }
+        public string Directoryname { get; set; }
     }
 }

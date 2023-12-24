@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,11 @@ namespace File_Manager
     /// </summary>
     public partial class MainWindow : Window
     {
-        string currentSelected = "";
+        string currentSelected = string.Empty;
+        string dskselected = string.Empty;
+        static string location;
+        bool isFolder;
+        bool isFile;
         public MainWindow()
         {
             InitializeComponent();
@@ -42,7 +47,7 @@ namespace File_Manager
                 if (drive.IsReady) // check if drive is in use
                 {
                     drives.name = drive.Name;
-                    MyList.Items.Add(drive);
+                    MyList.Items.Add(drives.name);
                 }
             }
         }
@@ -52,19 +57,21 @@ namespace File_Manager
             Directories directories = new Directories();
             DirectoryInfo files;
             Files file = new Files();
-            var selected = MyList.SelectedItem.ToString();
+            dskselected = MyList.SelectedItem.ToString();
             try
             {
-                if (selected != null)
+                if (dskselected != null)
                 {
-                    files = new DirectoryInfo(selected);
-                    var directory = Directory.GetDirectories(selected); //Get All Directories
+                    location = dskselected;
+                    files = new DirectoryInfo(dskselected);
+                    var directory = Directory.GetDirectories(dskselected); //Get All Directories
                     file.files = files.GetFiles(); //Get All files
 
                     foreach (var dirs in directory)
                     {
-                        directories.name = dirs.ToString();
-                        MyDataGrid.Items.Add(directories.name);
+                        directories.Directoryname = dirs.ToString();
+                        string name = System.IO.Path.GetFileName(directories.Directoryname);
+                        MyDataGrid.Items.Add(name);
                     }
                     foreach (var fls in file.files)
                     {
@@ -81,41 +88,57 @@ namespace File_Manager
         public void LoadFoldersAndFiles()
         {
             MyDataGrid.Items.Clear();
-            Directories directories = new Directories();
-            var items = StringFile.Text.ToString();
-            DirectoryInfo files;
-            files = new DirectoryInfo(items);
-            Directories.directories = files.GetDirectories();
-            foreach (var dirs in Directories.directories)
-            {    
-                directories.name = dirs.Name;
-                if (dirs.Exists)
-                {
-                    MyDataGrid.Items.Add(directories.name);
-                }
-            }
-            
-        }
-        private void Directories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            MyDataGrid.Items.Clear();
-            string selected = StringFile.Content.ToString();
+            currentSelected = StringFile.Text.ToString();
             Directories directories1 = new Directories();
             Files filesname = new Files();
-            if (selected != null) 
+            try
             {
-                var directories = Directory.GetDirectories(selected);
-                var files = Directory.GetFiles(selected);
-                foreach (var dirs in directories)
+                if (currentSelected != null)
                 {
-                    directories1.name = dirs.ToString();
-                    MyDataGrid.Items.Add(directories1.name);   
+                    var directories = Directory.GetDirectories(currentSelected); //Get all subdirectories(folders) 
+                    var files = Directory.GetFiles(currentSelected); //Get all files inside subdirectories(folders)
+                    foreach (var dirs in directories)
+                    {
+                        directories1.Directoryname = dirs.ToString();
+                        string name = System.IO.Path.GetFileName(directories1.Directoryname);
+                        MyDataGrid.Items.Add(name);
+                    }
+                    foreach (var file in files)
+                    {
+                        filesname.name = file.ToString();
+                        string filename = System.IO.Path.GetFileName(filesname.name);
+                        MyDataGrid.Items.Add(filename);
+                    }
+                    location = ($"{currentSelected}");
                 }
-                foreach (var file in files)
+            }
+            catch (Exception e)
+            {
+                
+            }
+        }
+            private void Directories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            
+            string files = StringFile.Text;
+            FileAttributes fileAttributes = File.GetAttributes(files);
+            try
+            {
+                if ((fileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
                 {
-                    filesname.name = file.ToString();
-                    MyDataGrid.Items.Add(filesname.name);
+                    isFolder = true;
+                    isFile = false;
+                    LoadFoldersAndFiles();
                 }
+                else
+                {
+                    isFolder = false;
+                    isFile = true;
+                    Process.Start(files);
+                }
+            }
+            catch 
+            { 
             }
         }
 
@@ -132,15 +155,16 @@ namespace File_Manager
         private void MyDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selcted = e.AddedItems;
-            var dskselcted = MyList.SelectedItem.ToString();
 
             foreach (var d in selcted)
             {
                 if (d != null)
                 {
-                   StringFile.Content = d.ToString();
+                    StringFile.Text = location + "\\" + d.ToString();
                 }
             }
+            
+            
         }
     }
 }
