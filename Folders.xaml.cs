@@ -26,12 +26,12 @@ namespace File_Manager
         }
         private void UserControl_MouseEnter(object sender, MouseEventArgs e)
         {
-         
+            Background.Visibility = Visibility.Visible;
         }
 
         private void UserControl_MouseLeave(object sender, MouseEventArgs e)
         {
-      
+            Background.Visibility = Visibility.Hidden;
         }
     }
 }

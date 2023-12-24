@@ -70,10 +70,10 @@
             </ListView>
             <ListView x:Name="MyDataGrid" Focusable="True" BorderBrush="Black" BorderThickness="1" Canvas.Left="180" Canvas.Top="110" Height="243" Width="545" HorizontalAlignment="Center" 
                       VerticalAlignment="Top" SelectionChanged="MyDataGrid_SelectionChanged" MouseDoubleClick="Directories_MouseDoubleClick"/>
-            <Button Style="{DynamicResource BackRoundButton}" x:Name="Back"  Content="Back" Height="33" Width="50" Canvas.Left="40" Canvas.Top="30"/>
-            <Button x:Name="Forward" Content="Forward" Height="33" Width="50" Canvas.Left="110" Canvas.Top="30"/>
-            <TextBox x:Name="StringFile" FontSize="18" Canvas.Left="180" Canvas.Top="30" HorizontalAlignment="Center" VerticalAlignment="Top"
-                   Width="545" Height="33" BorderBrush="Black" BorderThickness="1" RenderTransformOrigin="0.505,0.587" Focusable="True"/>
+            <Button Style="{DynamicResource BackRoundButton}" x:Name="Back"  Content="Back" Height="33" Width="50" Canvas.Left="120" Canvas.Top="30"/>
+            <Button Style="{DynamicResource BackRoundButton}" x:Name="Open" Content="Open" Height="33" Width="50" Canvas.Left="660" Canvas.Top="30" Click="Open_Click"/>
+            <TextBox x:Name="StringFile" FontSize="18" Canvas.Left="180" Canvas.Top="30" HorizontalAlignment="Left" VerticalAlignment="Center"
+                   Width="467" Height="33" BorderBrush="Black" BorderThickness="1" RenderTransformOrigin="0.505,0.587" Focusable="True"/>
         </Canvas>
     </Grid>
 </Window>

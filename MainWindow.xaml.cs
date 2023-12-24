@@ -151,7 +151,6 @@ namespace File_Manager
             }
             LoadFilesAndDirecories();
         }
-
         private void MyDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selcted = e.AddedItems;
@@ -162,9 +161,30 @@ namespace File_Manager
                 {
                     StringFile.Text = location + "\\" + d.ToString();
                 }
+            }   
+        }
+        private void Open_Click(object sender, RoutedEventArgs e)
+        {
+            string files = StringFile.Text;
+            FileAttributes fileAttributes = File.GetAttributes(files);
+            try
+            {
+                if ((fileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    isFolder = true;
+                    isFile = false;
+                    LoadFoldersAndFiles();
+                }
+                else
+                {
+                    isFolder = false;
+                    isFile = true;
+                    Process.Start(files);
+                }
             }
-            
-            
+            catch
+            {
+            }
         }
     }
 }
