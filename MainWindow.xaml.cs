@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
+using static System.Net.WebRequestMethods;
 
 namespace File_Manager
 {
@@ -121,7 +122,7 @@ namespace File_Manager
         {
             
             string files = StringFile.Text;
-            FileAttributes fileAttributes = File.GetAttributes(files);
+            FileAttributes fileAttributes = System.IO.File.GetAttributes(files);
             try
             {
                 if ((fileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
@@ -161,30 +162,80 @@ namespace File_Manager
                 {
                     StringFile.Text = location + "\\" + d.ToString();
                 }
-            }   
-        }
-        private void Open_Click(object sender, RoutedEventArgs e)
-        {
+            }
             string files = StringFile.Text;
-            FileAttributes fileAttributes = File.GetAttributes(files);
+            FileAttributes fileAttributes = System.IO.File.GetAttributes(files);
             try
             {
                 if ((fileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
                 {
                     isFolder = true;
                     isFile = false;
-                    LoadFoldersAndFiles();
                 }
                 else
                 {
                     isFolder = false;
                     isFile = true;
-                    Process.Start(files);
                 }
             }
             catch
             {
+
             }
+        }
+        private void Open_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (isFolder)
+                {
+                    LoadFoldersAndFiles();
+                }
+                else
+                {
+                    Process.Start(StringFile.Text);
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void DeleteItem_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = MyDataGrid.SelectedItems[0];
+            if ((selected != null) && (isFolder))
+            {
+                Directory.Delete(StringFile.Text);
+                
+            }
+            else
+            {
+                System.IO.File.Delete(StringFile.Text);
+            }
+            StringFile.Text = location;
+            MyDataGrid.Items.Remove(selected);
+        }
+
+        private void NewText_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CreateDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            Directories directories = new Directories();
+            directories.Directoryname = location + "\\" + "New Folder";
+            if (!Directory.Exists(directories.Directoryname))
+            {
+                var dir = Directory.CreateDirectory(directories.Directoryname);
+                MyDataGrid.Items.Add(dir.Name);
+            }
+        }
+        private void RenameItem_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
