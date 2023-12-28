@@ -29,16 +29,15 @@ namespace File_Manager
     {
         string currentSelected = string.Empty;
         string dskselected = string.Empty;
-        static string location;
+        static string location = "";
         bool isFolder;
-        bool isFile;
+        bool goBack;
+        static string FullPath = "";
         public MainWindow()
         {
             InitializeComponent();
             ShowDrives();
             MyCanvas.Focus();
-            
-
         }
         private void ShowDrives()
         {
@@ -128,14 +127,15 @@ namespace File_Manager
                 if ((fileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
                 {
                     isFolder = true;
-                    isFile = false;
                     LoadFoldersAndFiles();
                 }
                 else
                 {
                     isFolder = false;
-                    isFile = true;
-                    Process.Start(files);
+                    ProcessStartInfo psi = new ProcessStartInfo(StringFile.Text);
+                    psi.Verb = "open";
+                    psi.UseShellExecute = true;
+                    Process.Start(psi);
                 }
             }
             catch 
@@ -154,9 +154,9 @@ namespace File_Manager
         }
         private void MyDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selcted = e.AddedItems;
+            var selected = e.AddedItems;
 
-            foreach (var d in selcted)
+            foreach (var d in selected)
             {
                 if (d != null)
                 {
@@ -170,12 +170,10 @@ namespace File_Manager
                 if ((fileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
                 {
                     isFolder = true;
-                    isFile = false;
                 }
                 else
                 {
                     isFolder = false;
-                    isFile = true;
                 }
             }
             catch
@@ -193,15 +191,17 @@ namespace File_Manager
                 }
                 else
                 {
-                    Process.Start(StringFile.Text);
+                    ProcessStartInfo psi = new ProcessStartInfo(StringFile.Text);
+                    psi.Verb = "open";
+                    psi.UseShellExecute = true;
+                    Process.Start(psi);
                 }
             }
-            catch
+            catch 
             {
 
             }
         }
-
         private void DeleteItem_Click(object sender, RoutedEventArgs e)
         {
             var selected = MyDataGrid.SelectedItems[0];
@@ -220,7 +220,13 @@ namespace File_Manager
 
         private void NewText_Click(object sender, RoutedEventArgs e)
         {
-
+            Files files = new Files();
+            files.name = location + "\\" + "New Text Document.txt";
+            if(!System.IO.File.Exists(files.name))
+            {
+                var file = System.IO.File.Create(files.name);
+                MyDataGrid.Items.Add(file.Name);
+            }
         }
 
         private void CreateDirectory_Click(object sender, RoutedEventArgs e)
@@ -236,6 +242,40 @@ namespace File_Manager
         private void RenameItem_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void Back_Click(object sender, RoutedEventArgs e)
+        {
+            MyDataGrid.Items.Clear();
+            string path = StringFile.Text;
+            Drives drives = new Drives();
+            try
+            {
+                path = path.Substring(0, path.LastIndexOf("\\"));
+                foreach (var drive in drives.drives)
+                {
+                    if ((path == drive.Name) || ( path.Length < drive.Name.Length))
+                    {
+                        path = drive.Name;
+                    }
+                }
+                StringFile.Text = path;
+                location = StringFile.Text;
+                var dir = Directory.GetDirectories(path);
+                var file = Directory.GetFiles(path);
+                foreach (var d in dir)
+                {
+                    string dirname = System.IO.Path.GetFileName(d);
+                    MyDataGrid.Items.Add(dirname);
+                }
+                foreach (var d in file)
+                {
+                    string filename = System.IO.Path.GetFileName(d);
+                    MyDataGrid.Items.Add(filename);
+                }
+            }
+            catch { 
+            }
         }
     }
 }

@@ -79,7 +79,7 @@
                     </ContextMenu>
                 </ListBox.ContextMenu>
             </ListBox>
-            <Button Style="{DynamicResource BackRoundButton}" x:Name="Back"  Content="Back" Height="33" Width="50" Canvas.Left="120" Canvas.Top="30"/>
+            <Button Style="{DynamicResource BackRoundButton}" x:Name="Back"  Content="Back" Height="33" Width="50" Canvas.Left="120" Canvas.Top="30" Click="Back_Click"/>
             <Button Style="{DynamicResource BackRoundButton}" x:Name="Open" Content="Open" Height="33" Width="50" Canvas.Left="660" Canvas.Top="30" Click="Open_Click"/>
             <TextBox x:Name="StringFile" FontSize="18" Canvas.Left="180" Canvas.Top="30" HorizontalAlignment="Left" VerticalAlignment="Center"
                    Width="467" Height="33" BorderBrush="Black" BorderThickness="1" RenderTransformOrigin="0.505,0.587" Focusable="True"/>
