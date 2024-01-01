@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace File_Manager.Models
 {
-    internal class Directories
+    internal class Result
     {
-        public DirectoryInfo[]? directories;
-        public string Directoryname { get; set; } = string.Empty;
+        public bool Error { get; set; } = false; // By default is not error
+        public string Message { get; set; }
     }
 }

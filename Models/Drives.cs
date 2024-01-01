@@ -10,6 +10,6 @@ namespace File_Manager.Models
     internal class Drives
     {
         public DriveInfo[] drives = DriveInfo.GetDrives();
-        public string name { get; set; }
+        public string drivername { get; set; } = "";
     }
 }
