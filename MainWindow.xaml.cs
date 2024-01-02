@@ -27,6 +27,7 @@ namespace File_Manager
         public static bool isFolder;
       
         public static string? selected;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -38,7 +39,8 @@ namespace File_Manager
             DrivesBussines drivesBussines = new DrivesBussines();
             Drives drives = new Drives();
             drivesBussines.GetDrives(drives);
-            for (int i = 0; i < drivesBussines.drivesList.Count; i++)
+
+            for (int i = 0; i < drivesBussines.drivesList.Count; i++) //Getting all drives on machine
             {
                 drives.drivername = drives.drives[i].Name;
                 MyList.Items.Add(drives.drivername);
@@ -51,6 +53,7 @@ namespace File_Manager
             directories.directories = new DirectoryInfo(Location.location).GetDirectories();
             files.files = new DirectoryInfo(Location.location).GetFiles();
             MyDataGrid.Items.Clear();
+
             foreach (var d in directories.directories)
             {
                 directories.Directoryname = Path.GetFileName(d.Name);
@@ -84,9 +87,10 @@ namespace File_Manager
                 if (isFolder)
                 {
                     Location.location = actuallocation;
-                    driveB.GetDirectories(directories);
-                    driveB.GetFiles(files);
+                    driveB.GetDirectories(directories); //Get all directories and subdirectories
+                    driveB.GetFiles(files); //Get files
                     MyDataGrid.Items.Clear();
+
                     for (int i = 0; i < directories.directories?.Length; i++)
                     {
                         directories.Directoryname = directories.directories[i].Name;
@@ -103,7 +107,7 @@ namespace File_Manager
                 }
                 else
                 {
-                    ProcessStartInfo psi = new ProcessStartInfo(Location.location + "\\" + MyDataGrid.SelectedItem);
+                    ProcessStartInfo psi = new ProcessStartInfo(Location.location + "\\" + MyDataGrid.SelectedItem); //run file if is accesible 
                     psi.Verb = "open";
                     psi.UseShellExecute = true;
                     Process.Start(psi);
@@ -111,11 +115,11 @@ namespace File_Manager
             }
             catch (UnauthorizedAccessException)
             {
-                Location.location = exceptionlocation;
+                Location.location = exceptionlocation; // if get unathorized directory to not change location
             }
         }
 
-            private void Directories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void Directories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             LoadFoldersAndFiles();
         }
@@ -134,22 +138,9 @@ namespace File_Manager
             {
                 drives.drivername = (string)MyList.SelectedItem;
                 Location.location = drives.drivername;
-                driveB.GetDirectories(directories);
-                driveB.GetFiles(files);
-                MyDataGrid.Items.Clear();
-                for (int i = 0; i < directories.directories?.Length; i++)
-                {
-                    directories.Directoryname = directories.directories[i].Name;
-                    string name = Path.GetFileName(directories.Directoryname);
-                    MyDataGrid.Items.Add(name);
-                }
-                for (int i = 0; i < files.files?.Length; i++)
-                {
-                    files.filesname = files.files[i].Name;
-                    string name = Path.GetFileName(files.filesname);
-                    MyDataGrid.Items.Add(name);
-                }
-                StringFile.Text = Location.location;
+                refreshList();
+               
+                StringFile.Text = Location.location; //Get location in string
             }
         }
         private void MyDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -164,10 +155,10 @@ namespace File_Manager
                 {
                     string file = Location.location +"\\" + d;
                     
-                    FileAttributes fileAttributes = System.IO.File.GetAttributes(file);
+                    FileAttributes fileAttributes = File.GetAttributes(file);
                     try
                     {
-                        if ((fileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
+                        if ((fileAttributes & FileAttributes.Directory) == FileAttributes.Directory) //Get info if is directory or file
                         {
                             isFolder = true;
                         }
@@ -189,15 +180,19 @@ namespace File_Manager
         }
         private void DeleteItem_Click(object sender, RoutedEventArgs e)
         {
+            if (Location.location == string.Empty)
+            {
+                return;
+            }
             try
             {
-                if ((MyDataGrid.SelectedItem != null) && (isFolder))
+                if ((MyDataGrid.SelectedItem != null) && (isFolder)) // delete selected folder
                 {
                     directories.Directoryname = Location.location + "\\" + (string)MyDataGrid.SelectedItem;
                     directoriesB.RemoveDirectory(directories);
                     MyDataGrid.Items.Remove(MyDataGrid.SelectedItem);
                 }
-                if ((MyDataGrid.SelectedItem != null) && (!isFolder))
+                if ((MyDataGrid.SelectedItem != null) && (!isFolder)) // delete selected file
                 {
                     files.filesname = Location.location + "\\" + (string)MyDataGrid.SelectedItem;
                     filesB.RemoveFiles(files);
@@ -223,6 +218,11 @@ namespace File_Manager
             dialogWindow.Owner = this;
             dialogWindow.Title = "Create File";
             dialogWindow.Text.Text = "Type name of file";
+
+            if(Location.location == string.Empty)
+            {
+                return;
+            }
             if (dialogWindow.ShowDialog() == true)
             {
                 if (dialogWindow.DialogResult == true)
@@ -239,6 +239,11 @@ namespace File_Manager
             dialogWindow.AddDirectory = true;
             dialogWindow.Title = "Create Directory";
             dialogWindow.Owner = this;
+
+            if (Location.location == string.Empty)
+            {
+                return;
+            }
             if (dialogWindow.ShowDialog() == true)
             {
                 if (dialogWindow.DialogResult == true)
@@ -254,6 +259,11 @@ namespace File_Manager
             dialogWindow.AddDirectory = false;
             dialogWindow.RenameItem = true;
             dialogWindow.Owner = this;
+
+            if (Location.location == string.Empty)
+            {
+                return;
+            }
             try
             {
                 if (isFolder)
@@ -303,18 +313,8 @@ namespace File_Manager
                 }
                 StringFile.Text = path;
                 Location.location = StringFile.Text;
-                var dir = Directory.GetDirectories(path);
-                var file = Directory.GetFiles(path);
-                foreach (var d in dir)
-                {
-                    string dirname = Path.GetFileName(d);
-                    MyDataGrid.Items.Add(dirname);
-                }
-                foreach (var d in file)
-                {
-                    string filename = Path.GetFileName(d);
-                    MyDataGrid.Items.Add(filename);
-                }
+                
+                refreshList();
             }
             catch 
             { 

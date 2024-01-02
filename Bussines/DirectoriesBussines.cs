@@ -12,7 +12,7 @@ namespace File_Manager.Bussines
             string dir = directory.Directoryname;
             if (Directory.Exists(dir))
             {
-                Directory.Delete(dir);
+                Directory.Delete(dir, true);
             }
             return result;
         }

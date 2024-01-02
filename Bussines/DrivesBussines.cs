@@ -8,7 +8,9 @@ namespace File_Manager.Bussines
     internal class DrivesBussines
     {
         Drives drives = new Drives();
+
         public List<DriveInfo> drivesList = new List<DriveInfo>();
+
         public DrivesBussines()
         {
             drives.drives = DriveInfo.GetDrives();
