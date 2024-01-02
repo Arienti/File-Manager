@@ -48,5 +48,26 @@ namespace File_Manager.Bussines
             }
             return drive;
         }
+        public DrivesBussines GetFiles(Files files)
+        {
+            DrivesBussines drive = new DrivesBussines();
+            try
+            {
+                if (Location.location != string.Empty)
+                {
+                    files.files = new DirectoryInfo(Location.location).GetFiles();
+
+                    foreach (var f in files.files)
+                    {
+                        files.filesname = f.Name;
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+
+            }
+            return drive;
+        }
     }
 }
