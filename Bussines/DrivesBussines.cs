@@ -2,17 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace File_Manager.Bussines
 {
     internal class DrivesBussines
     {
         Drives drives = new Drives();
-        DirectoriesBussines Directories = new DirectoriesBussines();
         public List<DriveInfo> drivesList = new List<DriveInfo>();
         public DrivesBussines()
         {
@@ -35,28 +30,21 @@ namespace File_Manager.Bussines
         public DrivesBussines GetDirectories(Directories directories)
         {
             DrivesBussines drive = new DrivesBussines();
-            if (Location.location != string.Empty)
+            try
             {
-                directories.directories = new DirectoryInfo(Location.location).GetDirectories();
-
-                foreach (var d in directories.directories)
+                if (Location.location != string.Empty)
                 {
-                    directories.Directoryname = d.Name;
+                    directories.directories = new DirectoryInfo(Location.location).GetDirectories();
+
+                    foreach (var d in directories.directories)
+                    {
+                        directories.Directoryname = d.Name;
+                    }
                 }
             }
-            return drive;
-        }
-        public DrivesBussines GetFiles(Files files)
-        {
-            DrivesBussines drive = new DrivesBussines();
-            if (Location.location != string.Empty)
+            catch(UnauthorizedAccessException)
             {
-                files.files = new DirectoryInfo(Location.location).GetFiles();
 
-                foreach (var f in files.files)
-                {
-                    files.filesname = f.Name;
-                }
             }
             return drive;
         }

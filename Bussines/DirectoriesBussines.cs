@@ -1,16 +1,10 @@
 ﻿using File_Manager.Models;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace File_Manager.Bussines
 {
     internal class DirectoriesBussines
     {
-        Directories directories = new Directories();
         Result result = new Result();
 
         public Result RemoveDirectory(Directories directory)
@@ -24,16 +18,37 @@ namespace File_Manager.Bussines
         }
         public Result CreateDirectory(Directories directory)
         {
-            if (!Directory.Exists(directory.Directoryname))
+            Result result = new Result();
+            directory.directories = new DirectoryInfo(Location.location).GetDirectories();
+
+            if (Directory.Exists(directory.Directoryname))
             {
-                Directory.CreateDirectory(directory.Directoryname);
+                result.Error = true;
+                result.Message = "Directory is existing";
+                return result;
             }
             else
             {
-                result.Error = true;
-                result.Message = "Directory exist";
+                Directory.CreateDirectory(directory.Directoryname);
+                return result;
             }
-            return result;
+        }
+        public Result RenameDirectories(Directories directory, string newName)
+        {
+            Result result = new Result();
+            directory.directories = new DirectoryInfo(Location.location).GetDirectories();
+
+            if (Directory.Exists(newName))
+            {
+                result.Error = true;
+                result.Message = "Directory is existing";
+                return result;
+            }
+            else
+            {
+                Directory.Move(directory.Directoryname, newName);
+                return result;
+            }
         }
     }
 }
