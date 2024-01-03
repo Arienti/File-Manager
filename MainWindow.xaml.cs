@@ -23,9 +23,9 @@ namespace File_Manager
         DirectoriesBussines directoriesB = new DirectoriesBussines();
 
         FilesBussines filesB = new FilesBussines();
-        
+
         public static bool isFolder;
-      
+
         public static string? selected;
 
         public MainWindow()
@@ -39,7 +39,7 @@ namespace File_Manager
             DrivesBussines drivesBussines = new DrivesBussines();
             Drives drives = new Drives();
             drivesBussines.GetDrives(drives);
-
+            MyList.Items.Clear();
             for (int i = 0; i < drivesBussines.drivesList.Count; i++) //Getting all drives on machine
             {
                 drives.drivername = drives.drives[i].Name;
@@ -50,30 +50,37 @@ namespace File_Manager
         {
             Directories directories = new Directories();
             Files files = new Files();
-            if(Location.location == string.Empty)
+            if (Location.location == string.Empty)
             {
                 return;
             }
-            directories.directories = new DirectoryInfo(Location.location).GetDirectories();
-            files.files = new DirectoryInfo(Location.location).GetFiles();
-            MyDataGrid.Items.Clear();
+            try
+            {
+                directories.directories = new DirectoryInfo(Location.location).GetDirectories();
+                files.files = new DirectoryInfo(Location.location).GetFiles();
+                MyDataGrid.Items.Clear();
 
-            foreach (var d in directories.directories)
-            {
-                directories.Directoryname = Path.GetFileName(d.Name);
-                MyDataGrid.Items.Add(directories.Directoryname);
+                foreach (var d in directories.directories)
+                {
+                    directories.Directoryname = Path.GetFileName(d.Name);
+                    MyDataGrid.Items.Add(directories.Directoryname);
+                }
+                foreach (var f in files.files)
+                {
+                    files.filesname = Path.GetFileName(f.Name);
+                    MyDataGrid.Items.Add(files.filesname);
+                }
             }
-            foreach (var f in files.files)
+            catch
             {
-                files.filesname = Path.GetFileName(f.Name);
-                MyDataGrid.Items.Add(files.filesname);
+                MessageBox.Show("File or Directory does not exist", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         public void LoadFoldersAndFiles()
         {
             string actuallocation = "";
             string exceptionlocation = "";
-            if(MyDataGrid.SelectedItem ==null)
+            if (MyDataGrid.SelectedItem == null)
             {
                 return;
             }
@@ -135,7 +142,7 @@ namespace File_Manager
         private void MyList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Drives drives = new Drives();
-                  
+
             if (MyList.SelectedItem == null)
             {
                 return;
@@ -147,7 +154,7 @@ namespace File_Manager
                 drives.drivername = (string)MyList.SelectedItem;
                 Location.location = drives.drivername;
                 refreshList();
-               
+
                 StringFile.Text = Location.location; //Get location in string
             }
         }
@@ -157,15 +164,16 @@ namespace File_Manager
             {
                 return;
             }
-            foreach (var d in MyDataGrid.SelectedItems)
+            try
             {
-                if (d != null)
+                foreach (var d in MyDataGrid.SelectedItems)
                 {
-                    string file = Location.location +"\\" + d;
-                    
-                    FileAttributes fileAttributes = File.GetAttributes(file);
-                    try
+                    if (d != null)
                     {
+                        string file = Location.location + "\\" + d;
+
+                        FileAttributes fileAttributes = File.GetAttributes(file);
+
                         if ((fileAttributes & FileAttributes.Directory) == FileAttributes.Directory) //Get info if is directory or file
                         {
                             isFolder = true;
@@ -175,11 +183,11 @@ namespace File_Manager
                             isFolder = false;
                         }
                     }
-                    catch
-                    {
-
-                    }
                 }
+            }
+            catch
+            {
+
             }
         }
         private void Open_Click(object sender, RoutedEventArgs e)
@@ -361,7 +369,23 @@ namespace File_Manager
 
                     childrens.Height = childrens.Height * scaleHeight;
                     childrens.Width = childrens.Width * scaleWidth;
+                }
+            }
+        }
 
+        private void MyCanvas_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F5)
+            {
+                ShowDrives();
+            }
+            if(e.Key == Key.Enter)
+            {
+                LoadFoldersAndFiles();
+                if (MyDataGrid.SelectedItem == null)
+                {
+                    Location.location = StringFile.Text;
+                    refreshList();
                 }
             }
         }
