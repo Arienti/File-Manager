@@ -64,7 +64,7 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <Canvas x:Name="MyCanvas" Focusable="True">
+        <Canvas x:Name="MyCanvas" Focusable="True" SizeChanged="MyCanvas_SizeChanged">
             <ListView x:Name="MyList" Height="auto" Width="120" Canvas.Left="12" HorizontalAlignment="Left"  Canvas.Top="155" VerticalAlignment="Center"
                        SelectionChanged="MyList_SelectionChanged">
             </ListView>

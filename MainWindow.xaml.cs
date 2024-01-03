@@ -50,6 +50,10 @@ namespace File_Manager
         {
             Directories directories = new Directories();
             Files files = new Files();
+            if(Location.location == string.Empty)
+            {
+                return;
+            }
             directories.directories = new DirectoryInfo(Location.location).GetDirectories();
             files.files = new DirectoryInfo(Location.location).GetFiles();
             MyDataGrid.Items.Clear();
@@ -73,17 +77,17 @@ namespace File_Manager
             {
                 return;
             }
-            try 
+            try
             {
-            if (MyDataGrid.SelectedItem != null)
-            {
+                if (MyDataGrid.SelectedItem != null)
+                {
                     actuallocation = Location.location + "\\" + (string)MyDataGrid.SelectedItem;
                     exceptionlocation = Location.location;
-            }
-            else
-            {
-                actuallocation = Location.location;
-            }
+                }
+                else
+                {
+                    actuallocation = Location.location;
+                }
                 if (isFolder)
                 {
                     Location.location = actuallocation;
@@ -116,6 +120,10 @@ namespace File_Manager
             catch (UnauthorizedAccessException)
             {
                 Location.location = exceptionlocation; // if get unathorized directory to not change location
+            }
+            catch
+            {
+
             }
         }
 
@@ -177,6 +185,11 @@ namespace File_Manager
         private void Open_Click(object sender, RoutedEventArgs e)
         {
             LoadFoldersAndFiles();
+            if (MyDataGrid.SelectedItem == null)
+            {
+                Location.location = StringFile.Text;
+                refreshList();
+            }
         }
         private void DeleteItem_Click(object sender, RoutedEventArgs e)
         {
@@ -319,7 +332,39 @@ namespace File_Manager
             catch 
             { 
             } 
-        } 
+        }
+
+        private void MyCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MyCanvas = sender as Canvas;
+            SizeChangedEventArgs MycanvasArgs = e;
+            if(MycanvasArgs.PreviousSize.Width == 0)
+            {
+                return;
+            }
+            double oldHeight = MycanvasArgs.PreviousSize.Height;
+            double oldWidth = MycanvasArgs.PreviousSize.Width;
+            double newHeight = MycanvasArgs.NewSize.Height;
+            double newWidth = MycanvasArgs.NewSize.Width;
+
+            double scaleWidth = newWidth / oldWidth;
+            double scaleHeight = newHeight / oldHeight;
+            if (MyCanvas?.Children != null)
+            {
+                foreach (FrameworkElement childrens in MyCanvas.Children)
+                {
+                    double oldLeft = Canvas.GetLeft(childrens);
+                    double oldTop = Canvas.GetTop(childrens);
+
+                    Canvas.SetLeft(childrens, oldLeft * scaleWidth);
+                    Canvas.SetTop(childrens, oldTop * scaleHeight);
+
+                    childrens.Height = childrens.Height * scaleHeight;
+                    childrens.Width = childrens.Width * scaleWidth;
+
+                }
+            }
+        }
     }
 }
  
